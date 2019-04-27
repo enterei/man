@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>WebGL Example</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Basic vertex shader -->
+
+    <!-- Basic fragment shader -->
+
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+                    attribute vec3 aPosition;
+                    attribute vec3 aColor;
+                    
+        
+                    // model matrix
+                    uniform mat4 uMMatrix;
+                    // transposed inverse of the model matrix for transforming normals
+                  
+                    // projection matrix
+                    uniform mat4 uPMatrix;
+                    uniform mat4 camera;
+                    varying mediump vec3 vColor;
+                  
+                    void main()
+                    {
+                    vColor = aColor;
+                    gl_Position = uPMatrix * camera*uMMatrix * vec4(aPosition, 1.0);
+                    }
+                    </script>
+
+
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+
+                        varying mediump vec3 vColor;
+                      
+                    
+                    void main()
+                    {
+                        gl_FragColor = vec4(vColor,1.0 );
+                    }
+                    </script>
+
+
+
+
+
+
+
+    <script id="gauraud-vertex-shader" type="x-shader/x-fragment">
+        // reason for calling "gauraud vertex/fragment" shader is that i iniatially wanted to make 2 diffrent shaders and initiallize every sphere twice but then i used the mode variable
+
+                                            attribute vec4 aPosition;
+                                            attribute vec4 aNormal;
+
+                                            uniform mat4 uMMatrix;                                        
+                                            uniform mat4 uPMatrix;
+                                            uniform mat4 normalMatrix;
+                                            uniform mat4 camera;
+
+
+                                            uniform vec4 diffColor;
+                                            uniform vec4 specColor;                                           
+                                           
+                                            uniform vec4 lightPos;
+                                            varying vec4 realLightPos;
+                                            uniform mat4 lightModelMatrix;
+                                            uniform float shin;
+
+                                            
+                                            uniform float mode; 
+                                            //L: to light source
+                                            //N: the "real" normal
+                                            //E: vektor pos to camera
+                                    
+                                            varying vec3 N, L, E;
+
+                                            varying vec4 fColor;
+                                            varying float fmode; // for fragment schader
+
+
+
+                                            varying vec4 fdiffColor;
+                                            varying vec4 fspecColor;
+                                            varying float fshin;
+                                            varying vec3 cameraPos;
+                                            
+
+                                            
+
+                                            varying vec4 nNormal;
+                                            void main()
+                                            {   
+                                         
+                                                realLightPos = lightModelMatrix*lightPos;
+                                                fmode = mode;
+                                                gl_Position = uPMatrix * camera*uMMatrix * aPosition;
+
+                                                //point pos is  right point on surface to compute vector l
+
+                                                vec3 pos = (camera*uMMatrix * aPosition).xyz;
+                                                 cameraPos = vec3(0.0,-10.0,0.0);
+                                                
+                                                //vector L pointing to light source 
+                                 
+                                           L = normalize( realLightPos.xyz - pos );
+                                                
+                                                //E : vector from pos to the camera (10 behind origin) 
+                                         
+                                                    E = normalize(cameraPos-pos); // i realy hope this line is correct, but it should be becouse camera is 10 behind origin ....
+                                                
+                                                // normal with the right transforming matrix
+                                                 N = normalize((normalMatrix * aNormal).xyz);
+                                                
+
+                                                //  material’s diffuse reflection coefficient
+                                                 float Kd= 0.0;
+                                              
+                                            if( dot(L, N) > 0.0 ) {
+                                                Kd = dot(L,N);
+                                                } 
+
+                                              
+
+                                                  
+                                                vec4 ambient =vec4(0.8,0.0,0.0,0.3);
+
+                                                
+                                           
+                                                vec4  diffuse = Kd*diffColor;
+                                                //halfway
+                                                vec3 H = normalize( L + E );
+
+                                                float angle = max(dot(N, H), 0.0);
+
+                                                //  material’s specualr reflection coefficient
+
+                                                float Ks= pow(angle,shin);
+
+                                                vec4  specular = Ks * specColor;
+                                                
+                                                if( dot(L, N) < 0.0 ) {
+                                                specular = vec4(0.0, 0.0, 0.0, 1.0);
+                                                } 
+
+                                                if(mode==0.0)fColor=diffuse+ambient;
+                                                if(mode==1.0)fColor=specular+ambient+diffuse;
+                                                fColor.a  =1.0;
+
+                                                fdiffColor = diffColor;
+                                                fspecColor = specColor;
+                                                fshin = shin;
+
+                                            }
+                                            </script>
+    <script id="gauraud-fragment-shader" type="x-shader/x-fragment">
+
+                                            precision mediump float;
+
+                                            varying vec4 fdiffColor;
+                                            varying vec4 fspecColor;
+                                            varying float fshin;
+                                            
+                                            varying vec4 fColor;
+                                            varying float fmode;
+                                            varying vec3 N, L, E;
+
+                                            
+                                            
+                                            void main()
+                                            {
+                                                vec3 H = normalize( L + E );
+                                                float Kd= 0.0;
+                                              
+                                                if( dot(L, N) > 0.0 ) {
+                                                    Kd = dot(L,N);
+                                                    } 
+                                                vec4  diffuse = Kd*fdiffColor;
+                                                vec4 ambient =vec4(0.8,0.0,0.0,0.3);
+
+
+                                                
+                                                float angle = max(dot(N, H), 0.0);
+                                                float Ks= pow(angle,fshin);
+                                                
+
+                                                    
+                                           
+
+
+                                                vec4  specular = Ks * fspecColor;                                                
+                                                if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
+
+
+                                                if(fmode==0.0) gl_FragColor = fColor;
+                                                if(fmode==1.0) gl_FragColor=fColor;
+                                                if(fmode==2.0){
+                                                       vec4 Color = diffuse+ambient;
+                                                        Color.a = 1.0;
+                                                        gl_FragColor = Color;
+                                                }
+                                                 if(fmode==3.0){
+                                                    vec4 Color = specular+ambient+diffuse;
+                                                    Color.a = 1.0;
+                                                    gl_FragColor =  Color;
+
+                                                }
+                                            }
+                                            </script>
+
+
+
+    <!-- gl-matrix.js for linear algebra -->
+
+</head>
+
+<body onload="main()">
+    <div>
+        <canvas id="glCanvas" width="640" height="640"></canvas>
+    </div>
+    <input type="checkbox" id="myCheck" checked>
+
+</body>
+<button onclick="setfalse()">b</button>
+
+
+<script type="text/javascript" src="gl-matrix/gl-matrix-min.js"></script>
+<script type="text/javascript" src="initShaders.js"></script>
+
+<script type="text/javascript" src="light.js"></script>
+
+<script type="text/javascript" src="coordinateSystem.js"></script>
+<script type="text/javascript" src="script.js"></script>
+
+<script type="text/javascript" src="sphere.js"></script>
+<script type="text/javascript" src="shadedsphere.js"></script>
+<script type="text/javascript" src="l.js"></script>
+
+</html>
