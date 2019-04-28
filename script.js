@@ -59,7 +59,7 @@ function init() {
 
 
     // reason for calling "gauraud vertex/fragment" shader is that i iniatially wanted to make 2 diffrent shaders and initiallize every sphere twice but then i used the mode variable
-     pacman = new ShadedSphere(gl, [0.0, 0.05, 0.0], "vertex-shader", "fragment-shader");
+     pacman = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "vertex-shader", "fragment-shader");
 
     pacman.updateScale([0.05,0.05,0.05]);
     var gP =  new GroundPlane(gl);
@@ -77,7 +77,7 @@ function init() {
 
 
 
-    pacman.updateTrans(pacman.position);
+    pacman.updateGlTrans(pacman.position);
    cubes.push(pacman);
    
 
@@ -344,7 +344,7 @@ function setfalse() {
 
 function update_trans() {
  
-    pacman.updateTrans(trans);
+    pacman.updateGlTrans(trans);
    //cubes[0].updateGlTrans(trans);
    console.log(pacman.transM);
    

@@ -230,7 +230,7 @@ function ShadedSphere(gl,inittrans,vs,fs){
 
     };
     this.updateTrans = function (t) {
-      //  console.log(this.transM);
+        console.log(this.transM);
        // console.log(t);
         var lt = mat4.create();
         mat4.translate(lt, lt, t);
@@ -250,7 +250,7 @@ function ShadedSphere(gl,inittrans,vs,fs){
        
 
 
-        //console.log(this.transM);
+        console.log("NOEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 
 
         // mat4.multiply(this.transM,this.transM,help);
@@ -266,7 +266,7 @@ function ShadedSphere(gl,inittrans,vs,fs){
         this.updateAll();
     };
     this.updateGlTrans = function(t){
-      //  console.log("habede");
+      // console.log("habede");
         mat4.translate(this.gltrans,this.gltrans,t);        
         this.updateGlAll();
     };
