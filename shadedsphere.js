@@ -17,21 +17,22 @@ function ShadedSphere(gl,inittrans,vs,fs){
         this.locations = {
             attribute: {
                 aPosition: gl.getAttribLocation( this.shaderProgram, "aPosition"),
-                aNormal: gl.getAttribLocation(this.shaderProgram,"aNormal"),
+           //     aNormal: gl.getAttribLocation(this.shaderProgram,"aNormal"),
+                aColor:gl.getAttribLocation(this.shaderProgram,"aColor"),
                
             },
             uniform: {
                 uMMatrix: gl.getUniformLocation( this.shaderProgram, "uMMatrix"),
-               
+                uCMatrix: gl.getUniformLocation(this.shaderProgram,"camera"),
                 uPMatrix: gl.getUniformLocation( this.shaderProgram, "uPMatrix"),
-                matdiff: gl.getUniformLocation(this.shaderProgram,"diffColor"),
+            /*    matdiff: gl.getUniformLocation(this.shaderProgram,"diffColor"),
                 matspec: gl.getUniformLocation(this.shaderProgram,"specColor"),
                 matnormal: gl.getUniformLocation(this.shaderProgram,"normalMatrix"),
                 matlightPos: gl.getUniformLocation(this.shaderProgram,"lightPos"),
                 smode: gl.getUniformLocation(this.shaderProgram,"mode"),
                 shine: gl.getUniformLocation(this.shaderProgram,"shin"), 
-                uCMatrix: gl.getUniformLocation(this.shaderProgram,"camera"),
-                uMLight: gl.getUniformLocation(this.shaderProgram,"lightModelMatrix"),
+                
+                uMLight: gl.getUniformLocation(this.shaderProgram,"lightModelMatrix"),*/
 
 
 
@@ -39,7 +40,7 @@ function ShadedSphere(gl,inittrans,vs,fs){
             }
         };
         gl.enableVertexAttribArray( this.locations.attribute.aPosition);
-        gl.enableVertexAttribArray( this.locations.attribute.aNormal);
+        //gl.enableVertexAttribArray( this.locations.attribute.aNormal);
    
 
         if(shadedsphere_points.length==0){
@@ -54,20 +55,25 @@ function ShadedSphere(gl,inittrans,vs,fs){
         gl.bindBuffer(gl.ARRAY_BUFFER, pBuffer);
          gl.bufferData(gl.ARRAY_BUFFER, flatten (shadedsphere_points), gl.STATIC_DRAW);
         
-        const nBuffer = gl.createBuffer();
+     /*   const nBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
         
-        gl.bufferData(gl.ARRAY_BUFFER, flatten (shadedsphere_normals), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, flatten (shadedsphere_normals), gl.STATIC_DRAW);*/
+        const cBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER,cBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(shadeds_color),gl.STATIC_DRAW);
         
        
         
         this.buffers = {
             pBuffer: pBuffer,
-            nBuffer: nBuffer,
+            cBuffer: cBuffer,
+       //     nBuffer: nBuffer,
 
 
             pComponents: 4, 
-            nComponents: 4,
+            cComponents: 3,
+         //   nComponents: 4,
             
         };
         
@@ -101,13 +107,25 @@ function ShadedSphere(gl,inittrans,vs,fs){
     mat4.lookAt(this.camera,[0,0,10],[0,0,0],[0,1,0]);
 
 
+    this.angle = degToRad(45);
+        this.cameraM = mat4.create();
+        mat4.rotateX(this.cameraM,this.cameraM,this.angle);
+        mat4.translate(this.cameraM,this.cameraM,[0,0,5]);
+        mat4.invert(this.cameraM,this.cameraM);
+
+
+
+
     this.draw = function(gl, pMatrix) {
       
         gl.useProgram( this.shaderProgram);
-        gl.uniformMatrix4fv( this.locations.uniform.uPMatrix, false, pMatrix);
-        gl.uniformMatrix4fv( this.locations.uniform.uMMatrix, false, this.mMatrix);
         
-        gl.uniform4fv( this.locations.uniform.uColor, [1.0, 0.0, 0.0, 1.0]);
+        gl.uniformMatrix4fv( this.locations.uniform.uPMatrix, false, pMatrix);
+        gl.uniformMatrix4fv( this.locations.uniform.uMMatrix, false, this.ctm);
+        gl.uniformMatrix4fv(this.locations.uniform.uCMatrix,false,CAMERA);
+
+        
+      //  gl.uniform4fv( this.locations.uniform.uColor, [1.0, 0.0, 0.0, 1.0]);
         
         gl.bindBuffer(gl.ARRAY_BUFFER,  this.buffers.pBuffer);
         gl.vertexAttribPointer( this.locations.attribute.aPosition,
@@ -248,6 +266,7 @@ function ShadedSphere(gl,inittrans,vs,fs){
         this.updateAll();
     };
     this.updateGlTrans = function(t){
+      //  console.log("habede");
         mat4.translate(this.gltrans,this.gltrans,t);        
         this.updateGlAll();
     };
@@ -280,6 +299,7 @@ function ShadedSphere(gl,inittrans,vs,fs){
     this.updateAllALL = function(){
         mat4.identity(this.ctm);
         mat4.multiply(this.ctm,this.GlMatrix,this.mMatrix);
+       
     
     }
 
@@ -301,15 +321,7 @@ function fillshadedSpoints(){
 
    
     stetrahedron(va, vb, vc, vd, shadednumTimesToSubdivide);
-    for(var i = 0;i < 4096 ;i++) {
-        shadeds_color.push(0.0);
-        shadeds_color.push(1.0);
-
-        shadeds_color.push(0.0);
-        shadeds_color.push(1.0);
-        
-        
-    }
+  
 
 }
 
@@ -347,13 +359,23 @@ function sdivideTriangle(a, b, c, count) {
 
 function striangle(a, b, c){
     shadedsphere_points.push(a);
+    shadeds_color.push(0.5);
+    shadeds_color.push(0.0);
+    shadeds_color.push(0.5);
+
     shadedsphere_points.push(b);
+    shadeds_color.push(0.5);
+    shadeds_color.push(0.0);
+    shadeds_color.push(0.5);
     shadedsphere_points.push(c);
+    shadeds_color.push(0.5);
+    shadeds_color.push(0.0);
+    shadeds_color.push(0.5);
     shadeds_index += 3;
 
-    shadedsphere_normals.push(a[0],a[1], a[2], 0.0);
+ /*   shadedsphere_normals.push(a[0],a[1], a[2], 0.0);
      shadedsphere_normals.push(b[0],b[1], b[2], 0.0);
-     shadedsphere_normals .push(c[0],c[1], c[2], 0.0);
+     shadedsphere_normals .push(c[0],c[1], c[2], 0.0);*/
 
 
     }

@@ -1,11 +1,11 @@
 function main() {
     init();
 }
-
-
+var pacman = null;
 var trans = [0, 0, 0];
 var ltrans = [0, 0, 0];
 var cubes = [];
+
 var fragments1 = [];
 var fragments2 = [];
 var selected = 10;
@@ -19,7 +19,6 @@ var lightmode = false;
 var materialDiffuse = [1.0, 0.8, 0.0, 1.0];
 var materialSpecular = [1.0, 1.0, 1.0, 1.0];
 var lightPosition = [0.0, 10.0, -0.0, 1.0];
-var light = new light();
 
 
 var diffProduct = vec4.create();
@@ -45,32 +44,28 @@ function init() {
     let perspectiveMatrix = mat4.create();
     const asp = canvas.clientWidth / canvas.clientHeight;
     const bottom = -1;
-    const zNear = - 0.001;
+    const zNear = -10 ;
     const zFar = 100;
+      var fieldOfViewRadians = degToRad(5);
+      var cameraAngleRadians = degToRad(0);
+
     mat4.ortho(pMatrix, -asp, asp, bottom, -bottom, zNear, zFar);
-    perspectiveMatrix = mat4.perspective(perspectiveMatrix, 45, canvas.width / canvas.height, 0.01, 30);
-    console.log(perspectiveMatrix);
+    perspectiveMatrix = mat4.perspective(perspectiveMatrix, fieldOfViewRadians, canvas.width / canvas.height, 0.01, 30);
+
+
+
 
 
 
 
     // reason for calling "gauraud vertex/fragment" shader is that i iniatially wanted to make 2 diffrent shaders and initiallize every sphere twice but then i used the mode variable
-    var s1_fragment1 = new ShadedSphere(gl, [-0.1, 0.0, -0.0], "gauraud-vertex-shader", "gauraud-fragment-shader");
+     pacman = new ShadedSphere(gl, [0.0, 0.05, 0.0], "vertex-shader", "fragment-shader");
 
+    pacman.updateScale([0.05,0.05,0.05]);
+    var gP =  new GroundPlane(gl);
 
-    var s2_fragment1 = new ShadedSphere(gl, [-0.6, 0.3, -0.0], "gauraud-vertex-shader", "gauraud-fragment-shader");
-
-
-    var s3_fragment1 = new ShadedSphere(gl, [0.1, -0.3, -0.0], "gauraud-vertex-shader", "gauraud-fragment-shader");
-
-
-    var s4_fragment1 = new ShadedSphere(gl, [1.6, 0.2, -0.0], "gauraud-vertex-shader", "gauraud-fragment-shader");
-    var s5_fragment1 = new ShadedSphere(gl, [2.6, 0.7, -0.0], "gauraud-vertex-shader", "gauraud-fragment-shader");
-    var s6_fragment1 = new ShadedSphere(gl, [3.6, 0.6, -0.0], "gauraud-vertex-shader", "gauraud-fragment-shader");
-    var s7_fragment1 = new ShadedSphere(gl, [-2.3, 0.7, -0.0], "gauraud-vertex-shader", "gauraud-fragment-shader");
-    var s8_fragment1 = new ShadedSphere(gl, [-3.6, 0.7, -0.0], "gauraud-vertex-shader", "gauraud-fragment-shader");
-    var s9_fragment1 = new ShadedSphere(gl, [-4.3, 0.7, -0.0], "gauraud-vertex-shader", "gauraud-fragment-shader");
-
+   
+        updateWalls(gl);
 
 
 
@@ -82,37 +77,28 @@ function init() {
 
 
 
-    cubes.push(s1_fragment1);
-    cubes.push(s2_fragment1);
-    cubes.push(s3_fragment1);
-    cubes.push(s4_fragment1);
-    cubes.push(s5_fragment1);
-    cubes.push(s6_fragment1);
-    cubes.push(s7_fragment1);
-    cubes.push(s8_fragment1);
-    cubes.push(s9_fragment1);
-    
-
-    vec4.multiply(diffProduct, lightDiffuse, materialDiffuse);
-    vec4.create(); vec4.multiply(specProduct, lightSpecular, materialSpecular);
+    pacman.updateTrans(pacman.position);
+   cubes.push(pacman);
    
 
 
     
-    for (var i = 0; i < cubes.length; i++)cubes[i].updateTrans(cubes[i].position); // for alls cubes todo
+    /*for (var i = 0; i < cubes.length; i++)cubes[i].updateTrans(cubes[i].position); // for alls cubes todo
     for (var i = 0; i < cubes.length; i++)cubes[i].updateScale([0.5, 0.5, 0.5]); // for alls cubes todo
     for (var i = 0; i < fragments1.length; i++)fragments1[i].updateTrans(fragments1[i].position); // for alls cubes todo
     for (var i = 0; i < fragments2.length; i++)fragments2[i].updateTrans(fragments2[i].position); // for alls cubes todo
 
+*/
 
-    var coord = new CoordinateSystem(gl);
    
 
     var then = 0;
     function render(now) {
 
+        
+
         now *= 0.001;
-        const delta = now - then;
+       
         then = now;
 
 
@@ -123,37 +109,29 @@ function init() {
 
 
 
-        for (var i = 0; i < cubes.length; i++)cubes[i].draw(gl, perspectiveMatrix);
 
 
 
 
 
 
-        if (selected != 10&&lightmode==false) {
+        
+      /*   cubes[0].draw(gl, perspectiveMatrix,CAMERA);
+         for(i = 0; i<walls.length;i++) walls[i].draw(gl,perspectiveMatrix,CAMERA);
+          gP.draw(gl,perspectiveMatrix,CAMERA);*/
+
+          pacman.draw(gl, pMatrix);
+          for(i = 0; i<walls.length;i++) walls[i].draw(gl,pMatrix);
+           gP.draw(gl,pMatrix);
+
+      //   cubes[0].draw(gl, perspectiveMatrix);
+       //  for(i = 0; i<walls.length;i++) walls[i].draw(gl,perspectiveMatrix);
+       //  gP.draw(gl,perspectiveMatrix);
 
 
-
-            if (selected != 10) {
-
-                if (cubes[selected].name == "sphere") {
-                    //scale the coordinate system becouse sphere is to big for coordinate system
-                    mat4.scale(coord.permMat, cubes[selected].ctm, [2.0, 2.0, 2.0]);
-                    coord.draw(gl, perspectiveMatrix, coord.permMat);
-
-
-
-                }
-            }
-            else { //coord.draw(gl, perspectiveMatrix, cubes[selected].mMatrix);
-                coord.draw(gl, perspectiveMatrix, cubes[selected].mMatrix);
-
-            }
-
-
-        }
-
-        //  cubes[selected].draw(gl, perspectiveMatrix);
+        
+     //    gP.draw(gl,pMatrix);
+      //    cubes[0].draw(gl, pMatrix);
 
 
         //cubes[selected].draw(gl, pMatrix);
@@ -174,6 +152,7 @@ window.onkeydown = function (event) {
     var key = String.fromCharCode(event.keyCode);
     switch (key) {
         case '0': selected = 10;
+        alert("gaa");
 
             break;
 
@@ -218,6 +197,8 @@ window.onkeydown = function (event) {
 
         case 37:
             trans[0] = -0.01;
+         //   console.log("habede");
+
             ltrans[0] = -0.5;
             // cubes[selected].updateTrans(trans);
             update_trans(trans);
@@ -225,6 +206,8 @@ window.onkeydown = function (event) {
             break;
 
         case 39:
+      //  console.log("habede");
+
             trans[0] = 0.01;
             ltrans[0] = 0.5;
             // cubes[selected].updateTrans(trans);
@@ -232,13 +215,13 @@ window.onkeydown = function (event) {
             break;
 
         case 38:
-            trans[1] = 0.01;
+            trans[2] = 0.01;
             ltrans[1] = 0.5;
             // cubes[selected].updateTrans(trans);
             update_trans(trans);
             break;
         case 40:
-            trans[1] = -0.01;
+            trans[2] = -0.01;
             ltrans[1] = -0.5;
             // cubes[selected].updateTrans(trans);
             update_trans(trans);
@@ -338,6 +321,7 @@ window.onkeydown = function (event) {
 
 
 window.onkeyup = function (event) {
+  
 
     rotas[0] = 0.0;
     rotas[1] = 0.0;
@@ -359,41 +343,22 @@ function setfalse() {
 
 
 function update_trans() {
-    if (lightmode) {
-        light.updateGlTrans(ltrans)
+ 
+    pacman.updateTrans(trans);
+   //cubes[0].updateGlTrans(trans);
+   console.log(pacman.transM);
+   
+    cameraX += 0.5*trans[0];
+    cameraZ += 0.5*trans[2];
 
-    }
-    else {
-        if (selected == 10) {
+    
+    updateC();
 
-            for (i = 0; i < cubes.length; i++) {
-                cubes[i].updateGlTrans(trans);
-            }
+   }
 
-        }
-        else cubes[selected].updateTrans(trans);
-    }
-}
-function update_rota() {
-    if (lightmode) {
-        light.updateGlRota(rotas);
 
-    }
-    else {
 
-        if (selected == 10) {
-
-            for (i = 0; i < cubes.length; i++) {
-                cubes[i].updateGlRota(rotas);
-
-            }
-
-        }
-        else cubes[selected].updateRota(rotas);
-    }
-}
-
-function update_scale() {
+/*function update_scale() {
     if (lightmode) {
 
     }
@@ -407,4 +372,6 @@ function update_scale() {
         }
         else cubes[selected].updateScale(scale);
     }
-}
+}*/
+
+
