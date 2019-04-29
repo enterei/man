@@ -1,2 +1,11 @@
-var activesp = [0,1];
+var activesp = 0;
+var path0 = new Path(-1.34999,-0.44999999999999,-0.0001,0.00001,true,0);
+var path1= new Path(-0.45,-0.449, -0.3999999165534973,.3999999165534973,false,1);
+path0.neighbors.push(path0);
+path0.neighbors.push(path1);
+path1.neighbors.push(path1);
+path1.neighbors.push(path0);
 var paths=[];
+paths.push(path0);
+paths.push(path1);
+console.log(paths);

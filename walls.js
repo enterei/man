@@ -68,9 +68,7 @@ function updateWalls(gl){
 
 
     for (i = 0; i < walls.length; i++) {
-        console.log(i);
         walls[i].updateTrans(walls[i].position);
-        console.log(walls[i].ctm);
 
     }
 

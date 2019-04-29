@@ -230,7 +230,7 @@ function ShadedSphere(gl,inittrans,vs,fs){
 
     };
     this.updateTrans = function (t) {
-        console.log(this.transM);
+     //   console.log(this.transM);
        // console.log(t);
         var lt = mat4.create();
         mat4.translate(lt, lt, t);
@@ -266,9 +266,37 @@ function ShadedSphere(gl,inittrans,vs,fs){
         this.updateAll();
     };
     this.updateGlTrans = function(t){
-      // console.log("habede");
-        mat4.translate(this.gltrans,this.gltrans,t);        
-        this.updateGlAll();
+        
+        console.log(t);
+        var l = paths[activesp].neighbors.length;
+        var helpx = mat4.create();
+        helpx = mat4.clone(this.gltrans);
+        
+        mat4.translate(helpx,helpx,t);
+        //console.log(this.gltrans);  
+        for(i = 0;i<l;i++){
+      
+           var res=  paths[activesp].neighbors[i].check(helpx[12],helpx[14]);
+            console.log(res);
+
+           if(res.status){
+              
+               activesp=res.n
+              // console.log(this.gltrans);  
+               mat4.translate(this.gltrans,this.gltrans,t);     
+              // console.log(this.gltrans);   
+              this.updateGlAll();  
+              return;
+
+           }
+           console.log(this.gltrans);  
+
+        }
+        //mat4.translate(this.gltrans,this.gltrans,t);     
+        //console.log(this.gltrans);   
+       //this.updateGlAll();  
+     
+       
     };
 
     this.updateAll= function(){

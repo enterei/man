@@ -164,9 +164,9 @@ function Cube(gl,inittrans){
     }
 
     this.updateScale = function(s){
-        console.log(s);
+  //      console.log(s);
         mat4.scale(this.scaleM,this.scaleM,s);
-        console.log(this.scaleM);
+//        console.log(this.scaleM);
 
       
         this.updateAll();
@@ -200,8 +200,6 @@ function Cube(gl,inittrans){
     this.updateAllALL = function(){
         mat4.identity(this.ctm);
         mat4.multiply(this.ctm,this.GlMatrix,this.mMatrix);
-        console.log("habede");
-
     }
 
 }
