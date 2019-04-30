@@ -1,5 +1,5 @@
-angleX = degToRad(310);
-angleY = degToRad(45);
+angleX = degToRad(270);
+angleY = degToRad(0);
 
 cameraX = 0.0;
 cameraY= 0.0;

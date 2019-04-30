@@ -267,7 +267,8 @@ function ShadedSphere(gl,inittrans,vs,fs){
     };
     this.updateGlTrans = function(t){
         
-        console.log(t);
+        console.log(activesp);
+        console.log(paths[activesp]);
         var l = paths[activesp].neighbors.length;
         var helpx = mat4.create();
         helpx = mat4.clone(this.gltrans);
@@ -277,19 +278,22 @@ function ShadedSphere(gl,inittrans,vs,fs){
         for(i = 0;i<l;i++){
       
            var res=  paths[activesp].neighbors[i].check(helpx[12],helpx[14]);
-            console.log(res);
+      //      console.log(res);
 
            if(res.status){
               
                activesp=res.n
-              // console.log(this.gltrans);  
+               console.log("do step");  
                mat4.translate(this.gltrans,this.gltrans,t);     
-              // console.log(this.gltrans);   
+             console.log(this.gltrans);   
               this.updateGlAll();  
+
               return;
 
            }
-           console.log(this.gltrans);  
+           console.log("dont step");  
+
+
 
         }
         //mat4.translate(this.gltrans,this.gltrans,t);     

@@ -12,7 +12,7 @@ function Path(x1,x2,z1,z2,act,n){
     this.check= function(x,z){
 
        
-        console.log(this.x1,this.x2,this.z1,this.z2);
+      //  console.log(this.x1,this.x2,this.z1,this.z2);
        /* if(Math.round(x)>=Math.round(this.x1)) {console.log(true)
             console.log(x,this.x1);
             ;}
@@ -34,6 +34,7 @@ function Path(x1,x2,z1,z2,act,n){
         zn = parseInt(z*1000000);
         z1n=parseInt(this.z1*1000000);
         z2n=parseInt(this.z2*1000000);
+        console.log(this.n);
         console.log(x1n,x2n,z1n,z2n);
 
         console.log(xn,zn);
@@ -48,9 +49,9 @@ function Path(x1,x2,z1,z2,act,n){
         if(xn<=x2n) console.log(true);
         if(zn>=z1n) console.log(true);
         if(zn<=z2n) console.log(true);
-        else{
-            console.log(zn,z2n);
-        }
+       // else{
+       //     console.log(zn,z2n);
+       // }
         if(xn>=x1n&&xn<=x2n&&zn>=z1n&&zn<=z2n) return{status:true,n:this.n}
         return {
             status: false,
