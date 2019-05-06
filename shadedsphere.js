@@ -390,6 +390,15 @@ function sdivideTriangle(a, b, c, count) {
 }
 
 function striangle(a, b, c){
+    if(a[1]<0){
+        a[1]=0;
+    }
+    if(b[1]<0){
+        b[1]=0;
+    }
+    if(c[1]<0){
+        c[1]=0;
+    }
     shadedsphere_points.push(a);
     shadeds_color.push(0.5);
     shadeds_color.push(0.0);
@@ -463,4 +472,11 @@ function flatten( v )
     }
 
     return floats;
+}
+
+function dozero(){
+    for(i =0;i<shadedsphere_points.length;i++){
+
+    }
+
 }
