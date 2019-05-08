@@ -1,5 +1,5 @@
 function light(){
-    this.lightpos = [0.0, 10.0, -0.0, 1.0 ];
+    this.lightpos = [40.0, 40.0, -0.0, 1.0 ];
     this.GlMatrix = mat4.create();
     this.glrota = mat4.create();
     this.gltrans = mat4.create();

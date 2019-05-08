@@ -16,9 +16,11 @@ var lightrot = mat4.create();
 var shin = 100.0;
 var lightmode = false;
 
-var materialDiffuse = [1.0, 0.8, 0.0, 1.0];
+var materialDiffuse = [0.2, 0.3, 0.5, 0.0];
 var materialSpecular = [1.0, 1.0, 1.0, 1.0];
 var lightPosition = [0.0, 10.0, -0.0, 1.0];
+var light = new light();
+
 
 
 var diffProduct = vec4.create();
@@ -59,7 +61,9 @@ function init() {
 
 
     // reason for calling "gauraud vertex/fragment" shader is that i iniatially wanted to make 2 diffrent shaders and initiallize every sphere twice but then i used the mode variable
-     pacman = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "vertex-shader", "fragment-shader");
+    // pacman = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "vertex-shader", "fragment-shader");
+     pacman = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader");
+
         // pacman = new ShadedSphere(gl, [0.0, 0.05, 0.0], "vertex-shader", "fragment-shader");
 
 
@@ -72,8 +76,10 @@ function init() {
 
 
 
-    var lightDiffuse = [1.0, 1.0, 1.0, 1.0];
+    var lightDiffuse = [1.0, 1.5, 1.4, 1.0];
     var lightSpecular = [1.0, 1.0, 1.0, 1.0];
+    vec4.multiply(diffProduct, lightDiffuse, materialDiffuse);
+    vec4.create(); vec4.multiply(specProduct, lightSpecular, materialSpecular);
 
 
 
@@ -122,7 +128,7 @@ function init() {
          for(i = 0; i<walls.length;i++) walls[i].draw(gl,perspectiveMatrix,CAMERA);
           gP.draw(gl,perspectiveMatrix,CAMERA);*/
 
-          pacman.draw(gl, pMatrix);
+          pacman.drawL(gl, pMatrix);
           for(i = 0; i<walls.length;i++) walls[i].draw(gl,pMatrix);
            gP.draw(gl,pMatrix);
 

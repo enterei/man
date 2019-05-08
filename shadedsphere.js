@@ -17,7 +17,7 @@ function ShadedSphere(gl,inittrans,vs,fs){
         this.locations = {
             attribute: {
                 aPosition: gl.getAttribLocation( this.shaderProgram, "aPosition"),
-           //     aNormal: gl.getAttribLocation(this.shaderProgram,"aNormal"),
+                aNormal: gl.getAttribLocation(this.shaderProgram,"aNormal"),
                 aColor:gl.getAttribLocation(this.shaderProgram,"aColor"),
                
             },
@@ -25,14 +25,14 @@ function ShadedSphere(gl,inittrans,vs,fs){
                 uMMatrix: gl.getUniformLocation( this.shaderProgram, "uMMatrix"),
                 uCMatrix: gl.getUniformLocation(this.shaderProgram,"camera"),
                 uPMatrix: gl.getUniformLocation( this.shaderProgram, "uPMatrix"),
-            /*    matdiff: gl.getUniformLocation(this.shaderProgram,"diffColor"),
+                matdiff: gl.getUniformLocation(this.shaderProgram,"diffColor"),
                 matspec: gl.getUniformLocation(this.shaderProgram,"specColor"),
                 matnormal: gl.getUniformLocation(this.shaderProgram,"normalMatrix"),
                 matlightPos: gl.getUniformLocation(this.shaderProgram,"lightPos"),
                 smode: gl.getUniformLocation(this.shaderProgram,"mode"),
                 shine: gl.getUniformLocation(this.shaderProgram,"shin"), 
                 
-                uMLight: gl.getUniformLocation(this.shaderProgram,"lightModelMatrix"),*/
+                uMLight: gl.getUniformLocation(this.shaderProgram,"lightModelMatrix"),
 
 
 
@@ -40,7 +40,7 @@ function ShadedSphere(gl,inittrans,vs,fs){
             }
         };
         gl.enableVertexAttribArray( this.locations.attribute.aPosition);
-        //gl.enableVertexAttribArray( this.locations.attribute.aNormal);
+        gl.enableVertexAttribArray( this.locations.attribute.aNormal);
    
 
         if(shadedsphere_points.length==0){
@@ -55,10 +55,10 @@ function ShadedSphere(gl,inittrans,vs,fs){
         gl.bindBuffer(gl.ARRAY_BUFFER, pBuffer);
          gl.bufferData(gl.ARRAY_BUFFER, flatten (shadedsphere_points), gl.STATIC_DRAW);
         
-     /*   const nBuffer = gl.createBuffer();
+        const nBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
         
-        gl.bufferData(gl.ARRAY_BUFFER, flatten (shadedsphere_normals), gl.STATIC_DRAW);*/
+        gl.bufferData(gl.ARRAY_BUFFER, flatten (shadedsphere_normals), gl.STATIC_DRAW);
         const cBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER,cBuffer);
         gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(shadeds_color),gl.STATIC_DRAW);
@@ -68,12 +68,12 @@ function ShadedSphere(gl,inittrans,vs,fs){
         this.buffers = {
             pBuffer: pBuffer,
             cBuffer: cBuffer,
-       //     nBuffer: nBuffer,
+            nBuffer: nBuffer,
 
 
             pComponents: 4, 
             cComponents: 3,
-         //   nComponents: 4,
+            nComponents: 4,
             
         };
         
@@ -177,7 +177,7 @@ function ShadedSphere(gl,inittrans,vs,fs){
         gl.uniform4fv(this.locations.uniform.matlightPos,new Float32Array(light.lightpos));
         gl.uniform1f(this.locations.uniform.smode,mode);
         gl.uniform1f(this.locations.uniform.shine,shin);
-        gl.uniformMatrix4fv(this.locations.uniform.uCMatrix,false,this.camera);
+        gl.uniformMatrix4fv(this.locations.uniform.uCMatrix,false,CAMERA);
      
         gl.uniformMatrix4fv(this.locations.uniform.uMLight,false,light.GlMatrix);
 
@@ -390,7 +390,7 @@ function sdivideTriangle(a, b, c, count) {
 }
 
 function striangle(a, b, c){
-    if(a[1]<0){
+ /*   if(a[1]<0){
         a[1]=0;
     }
     if(b[1]<0){
@@ -398,7 +398,7 @@ function striangle(a, b, c){
     }
     if(c[1]<0){
         c[1]=0;
-    }
+    }*/
     shadedsphere_points.push(a);
     shadeds_color.push(0.5);
     shadeds_color.push(0.0);
@@ -414,9 +414,9 @@ function striangle(a, b, c){
     shadeds_color.push(0.5);
     shadeds_index += 3;
 
- /*   shadedsphere_normals.push(a[0],a[1], a[2], 0.0);
+    shadedsphere_normals.push(a[0],a[1], a[2], 0.0);
      shadedsphere_normals.push(b[0],b[1], b[2], 0.0);
-     shadedsphere_normals .push(c[0],c[1], c[2], 0.0);*/
+     shadedsphere_normals .push(c[0],c[1], c[2], 0.0);
 
 
     }
