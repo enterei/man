@@ -10,7 +10,7 @@ var fragments1 = [];
 var fragments2 = [];
 var selected = 10;
 var xxxx = true;
-var mode = 0.0;
+var mode = 2.0;
 var lightran = mat4.create();
 var lightrot = mat4.create();
 var shin = 100.0;
@@ -76,11 +76,11 @@ function init() {
 
 
 
-    var lightDiffuse = [1.0, 1.5, 1.4, 1.0];
-    var lightSpecular = [1.0, 1.0, 1.0, 1.0];
+    var lightDiffuse = [1.0, 0.5, 1.4, 0.0];
+    var lightSpecular = [0.2, 0.0, 0.2, 1.0];
     vec4.multiply(diffProduct, lightDiffuse, materialDiffuse);
     vec4.create(); vec4.multiply(specProduct, lightSpecular, materialSpecular);
-
+  //  diffProduct=[0.4,0.2,0.1,0.2];
 
 
 
@@ -129,12 +129,12 @@ function init() {
           gP.draw(gl,perspectiveMatrix,CAMERA);*/
 
           pacman.drawL(gl, pMatrix);
-          for(i = 0; i<walls.length;i++) walls[i].draw(gl,pMatrix);
+          for(i = 0; i<walls.length;i++) walls[i].drawL(gl,pMatrix);
            gP.draw(gl,pMatrix);
 
       //   cubes[0].draw(gl, perspectiveMatrix);
        //  for(i = 0; i<walls.length;i++) walls[i].draw(gl,perspectiveMatrix);
-       //  gP.draw(gl,perspectiveMatrix);
+       // gP.draw(gl,perspectiveMatrix);
 
 
         
@@ -381,5 +381,4 @@ function update_trans() {
         else cubes[selected].updateScale(scale);
     }
 }*/
-
 

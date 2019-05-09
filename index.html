@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 
@@ -52,111 +53,119 @@
 
 
     <script id="gauraud-vertex-shader" type="x-shader/x-fragment">
-        // reason for calling "gauraud vertex/fragment" shader is that i iniatially wanted to make 2 diffrent shaders and initiallize every sphere twice but then i used the mode variable
+                            // reason for calling "gauraud vertex/fragment" shader is that i iniatially wanted to make 2 diffrent shaders and initiallize every sphere twice but then i used the mode variable
+                    
+                                                                attribute vec4 aPosition;
+                                                                attribute vec4 aNormal;
+                                                                attribute vec4 aColor;
+                    
+                                                                uniform mat4 uMMatrix;                                        
+                                                                uniform mat4 uPMatrix;
+                                                                uniform mat4 normalMatrix;
+                                                                uniform mat4 camera;
+                    
+                    
+                                                                uniform vec4 diffColor;
+                                                                uniform vec4 specColor;                                           
+                                                               
+                                                                uniform vec4 lightPos;
+                                                                varying vec4 realLightPos;
+                                                                uniform mat4 lightModelMatrix;
+                                                                uniform float shin;
+                    
+                                                                
+                                                                uniform float mode; 
+                                                                //L: vector to light source
+                                                                //N: the "real" normal
+                                                                //E: vector pos to camera
+                                                        
+                                                                varying vec3 N, L, E;
+                    
+                                                                varying vec4 fColor;
+                                                                varying float fmode; // for fragment schader
+                    
+                    
+                    
+                                                                varying vec4 fdiffColor;
+                                                                varying vec4 fspecColor;
+                                                                varying float fshin;
+                                                                varying vec3 cameraPos;
+                                                                
+                    
+                                                                
+                    
+                                                                varying vec4 nNormal;
+                                                                void main()
+                                                                {   
+                                                                    
+                                                                    realLightPos = lightModelMatrix*lightPos;
+                                                                    fmode = mode;
+                                                                    gl_Position = uPMatrix * camera*uMMatrix * aPosition;
+                    
+                                                                    //point pos is  right point on surface to compute vector l
+                                                                    
+                                                                    vec3 pos = (camera*uMMatrix * aPosition).xyz;
+                                                                     cameraPos = vec3(0.0,-10.0,0.0);
+                                                                    
+                                                                    //vector L pointing to light source 
+                                                     
+                                                               L = normalize( realLightPos.xyz - pos );
+                                                              // L = normalize( realLightPos.xyz  );
+                                                                    
+                                                                    //E : vector from pos to the camera (10 behind origin) 
+                                                             
+                                                                        E = normalize(cameraPos-pos); // i realy hope this line is correct, but it should be becouse camera is 10 behind origin ....
+                                                                    
+                                                                    // normal with the right transforming matrix
+                                                                     N = normalize((normalMatrix * aNormal).xyz);
+                                                                    
+                    
+                                                                    //  material’s diffuse reflection coefficient
+                                                                     float diffusereflection= 0.0;
+                                                                  
+                                                                if( dot(L, N) > 0.0 ) {
+                                                                    diffusereflection = dot(L,N);
+                                                                    } 
+                    
+                                                                  
+                    
+                                                                      
+                                                                    vec4 ambient =vec4(0.0,1.0,1.0,0.1);
+                    
+                                                                    
+                                                               
+                                                                    vec4  diffuse = diffusereflection*diffColor;
+                                                                    //halfway vector
+                                                                    //vec3 H = normalize( L + E );
+                    
+                                                                    //float angle = max(dot(N, H), 0.0);
+                    
+                                                                    //  material’s specualr reflection coefficient
+                    
+                                                                 //   float specularreflection= pow(angle,shin);
+                    
+                                                                   // vec4  specular = specularreflection * specColor;
+                    
+                                                                    vec3 reflection = 2.0*max(dot(N,L),0.0)*N-L;
+                                                                    float rs = pow(max(dot(E,reflection),0.0),10.0);
+                                                                    vec4 spppc = rs * specColor; 
+                    
+                                                                    
+                                                                   if( dot(L, N) < 0.0 ) {
+                                                                    spppc = vec4(0.0, 0.0, 0.0, 1.0);
+                                                                    } 
+                    
+                                                                    if(mode==0.0)fColor=aColor+diffColor;
+                                                                    if(mode==1.0)fColor=aColor+diffColor+specColor;
+                                                                    fColor.a  =1.0;
+                    
+                                                                    fdiffColor = diffColor;
+                                                                    fspecColor = specColor;
+                                                                    fshin = shin;
+                    
+                                                                }
+           </script>
 
-                                            attribute vec4 aPosition;
-                                            attribute vec4 aNormal;
-
-                                            uniform mat4 uMMatrix;                                        
-                                            uniform mat4 uPMatrix;
-                                            uniform mat4 normalMatrix;
-                                            uniform mat4 camera;
-
-
-                                            uniform vec4 diffColor;
-                                            uniform vec4 specColor;                                           
-                                           
-                                            uniform vec4 lightPos;
-                                            varying vec4 realLightPos;
-                                            uniform mat4 lightModelMatrix;
-                                            uniform float shin;
-
-                                            
-                                            uniform float mode; 
-                                            //L: to light source
-                                            //N: the "real" normal
-                                            //E: vektor pos to camera
-                                    
-                                            varying vec3 N, L, E;
-
-                                            varying vec4 fColor;
-                                            varying float fmode; // for fragment schader
-
-
-
-                                            varying vec4 fdiffColor;
-                                            varying vec4 fspecColor;
-                                            varying float fshin;
-                                            varying vec3 cameraPos;
-                                            
-
-                                            
-
-                                            varying vec4 nNormal;
-                                            void main()
-                                            {   
-                                         
-                                                realLightPos = lightModelMatrix*lightPos;
-                                                fmode = mode;
-                                                gl_Position = uPMatrix * camera*uMMatrix * aPosition;
-
-                                                //point pos is  right point on surface to compute vector l
-
-                                                vec3 pos = (camera*uMMatrix * aPosition).xyz;
-                                                 cameraPos = vec3(0.0,-10.0,0.0);
-                                                
-                                                //vector L pointing to light source 
-                                 
-                                           L = normalize( realLightPos.xyz - pos );
-                                                
-                                                //E : vector from pos to the camera (10 behind origin) 
-                                         
-                                                    E = normalize(cameraPos-pos); // i realy hope this line is correct, but it should be becouse camera is 10 behind origin ....
-                                                
-                                                // normal with the right transforming matrix
-                                                 N = normalize((normalMatrix * aNormal).xyz);
-                                                
-
-                                                //  material’s diffuse reflection coefficient
-                                                 float Kd= 0.0;
-                                              
-                                            if( dot(L, N) > 0.0 ) {
-                                                Kd = dot(L,N);
-                                                } 
-
-                                              
-
-                                                  
-                                                vec4 ambient =vec4(1.0,1.0,0.0,1.0);
-
-                                                
-                                           
-                                                vec4  diffuse = Kd*diffColor;
-                                                //halfway
-                                                vec3 H = normalize( L + E );
-
-                                                float angle = max(dot(N, H), 0.0);
-
-                                                //  material’s specualr reflection coefficient
-
-                                                float Ks= pow(angle,shin);
-
-                                                vec4  specular = Ks * specColor;
-                                                
-                                                if( dot(L, N) < 0.0 ) {
-                                                specular = vec4(0.0, 0.0, 0.0, 1.0);
-                                                } 
-
-                                                if(mode==0.0)fColor=diffuse+ambient;
-                                                if(mode==1.0)fColor=specular+ambient+diffuse;
-                                                fColor.a  =1.0;
-
-                                                fdiffColor = diffColor;
-                                                fspecColor = specColor;
-                                                fshin = shin;
-
-                                            }
-                                            </script>
     <script id="gauraud-fragment-shader" type="x-shader/x-fragment">
 
                                             precision mediump float;
@@ -230,6 +239,9 @@
 
 <script type="text/javascript" src="gl-matrix/gl-matrix-min.js"></script>
 <script type="text/javascript" src="initShaders.js"></script>
+<!--<script type="text/javascript" src="Cubeattributes.js"></script>-->
+<script type="text/javascript" src="Cubeattributes.js"></script>
+
 <script type="text/javascript" src="path.js"></script>
 <script type="text/javascript" src="paths.js"></script>
 <script type="text/javascript" src="light.js"></script>
