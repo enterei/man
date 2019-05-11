@@ -5,6 +5,13 @@ var walls = [];
 
 
 function updateWalls(gl){
+    
+    Cubefillpoints();
+    Cubefillnormals();
+    CubefillColors();
+ 
+
+
 
     var wall1 = new Cube(gl, [0.0, 0.0, 0.5]);
     wall1.updateScale([15.0, 0.5, 0.5]);

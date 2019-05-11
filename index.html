@@ -47,8 +47,7 @@
                     </script>
 
 
-
-
+                 
 
 
 
@@ -82,6 +81,7 @@
                                                                 varying vec3 N, L, E;
                     
                                                                 varying vec4 fColor;
+                                                                varying vec4 oColor;
                                                                 varying float fmode; // for fragment schader
                     
                     
@@ -97,7 +97,7 @@
                                                                 varying vec4 nNormal;
                                                                 void main()
                                                                 {   
-                                                                    
+                                                                    oColor = aColor;
                                                                     realLightPos = lightModelMatrix*lightPos;
                                                                     fmode = mode;
                                                                     gl_Position = uPMatrix * camera*uMMatrix * aPosition;
@@ -167,7 +167,7 @@
            </script>
 
     <script id="gauraud-fragment-shader" type="x-shader/x-fragment">
-
+                                
                                             precision mediump float;
 
                                             varying vec4 fdiffColor;
@@ -175,6 +175,7 @@
                                             varying float fshin;
                                             
                                             varying vec4 fColor;
+                                            varying vec4 oColor;
                                             varying float fmode;
                                             varying vec3 N, L, E;
 
@@ -208,12 +209,12 @@
                                                 if(fmode==0.0) gl_FragColor = fColor;
                                                 if(fmode==1.0) gl_FragColor=fColor;
                                                 if(fmode==2.0){
-                                                       vec4 Color = diffuse+ambient;
+                                                       vec4 Color =oColor+diffuse;
                                                         Color.a = 1.0;
                                                         gl_FragColor = Color;
                                                 }
                                                  if(fmode==3.0){
-                                                    vec4 Color = specular+ambient+diffuse;
+                                                    vec4 Color = specular+oColor+diffuse;
                                                     Color.a = 1.0;
                                                     gl_FragColor =  Color;
 
@@ -241,6 +242,8 @@
 <script type="text/javascript" src="initShaders.js"></script>
 <!--<script type="text/javascript" src="Cubeattributes.js"></script>-->
 <script type="text/javascript" src="Cubeattributes.js"></script>
+<script type="text/javascript" src="Sphereattributes.js"></script>
+
 
 <script type="text/javascript" src="path.js"></script>
 <script type="text/javascript" src="paths.js"></script>
@@ -250,6 +253,7 @@
 <script type="text/javascript" src="views.js"></script>
 <script type="text/javascript" src="groundPlane.js"></script>
 <script type="text/javascript" src="shadedsphere.js"></script>
+
 <script type="text/javascript" src="cube.js"></script>
 
 <script type="text/javascript" src="script.js"></script>

@@ -1,20 +1,24 @@
 var Cubepoints= [];
 var Cubenormals = [];
 var Cubecolors= [];
-var CubeColor = [0.1,0.2,0.0,0.9];
+var CubeColor = [0.0,0.0,0.0,1.0];
 
 
 function CubefillColors(){
     
-    for(i =0;i<37;i++){
+    
+  /*  for(i =0;i<36;i++){
         Cubecolors.push(CubeColor[0]);
         Cubecolors.push(CubeColor[1]);
         Cubecolors.push(CubeColor[2]);
         Cubecolors.push(CubeColor[3]);
 
 
+    }*/
+    for(i = 0;i<36;i++) {Cubecolors.push(CubeColor);
+    
     }
-
+    console.log(Cubecolors.length);
 };
 
  

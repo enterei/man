@@ -1,3 +1,4 @@
+var angY=0 ;
 angleX = degToRad(310);
 angleY = degToRad(45);
 

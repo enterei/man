@@ -1,17 +1,13 @@
-var shadedsphere_points= [];
-var shadeds_color=[];
-var shadedsphere_normals = [];
-var shadeds_index =0;
-var shadednumTimesToSubdivide = 3;
 
 
 
-function ShadedSphere(gl,inittrans,vs,fs){
+
+function ShadedSphere(gl,inittrans,vs,fs,oben){
    
       
-
+        console.log(oben);
         this.shaderProgram = initShaders(gl,vs, fs);
-        
+        this.oben = oben;
       
         console.log(vs);
         console.log(fs);
@@ -45,32 +41,36 @@ function ShadedSphere(gl,inittrans,vs,fs){
         gl.enableVertexAttribArray( this.locations.attribute.aColor);
    
 
-        if(shadedsphere_points.length==0){
-            console.log("ein mal");
-            fillshadedSpoints();}
-        console.log(shadedsphere_points.length);
-        console.log(shadeds_color.length);
-        console.log(shadeds_index);
+        if(Spherepoints.length==0){
+            console.log(this.oben);
+            fillshadedSpoints(this.oben);}
+        else{
+            console.log("uahhh");
+
+            Spherepoints=[];
+            fillshadedSpoints(this.oben)
+        }
+      
   
 
-        const pBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, pBuffer);
-         gl.bufferData(gl.ARRAY_BUFFER, flatten (shadedsphere_points), gl.STATIC_DRAW);
+        this.pBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.pBuffer);
+         gl.bufferData(gl.ARRAY_BUFFER, flatten (Spherepoints), gl.STATIC_DRAW);
         
-        const nBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
+        this.nBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.nBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, flatten (Spherenormals), gl.STATIC_DRAW);
+
+        this.cBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER,this.cBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER,flatten(Spherecolors),gl.STATIC_DRAW);
         
-        gl.bufferData(gl.ARRAY_BUFFER, flatten (shadedsphere_normals), gl.STATIC_DRAW);
-        const cBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER,cBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(shadeds_color),gl.STATIC_DRAW);
-        
-       console.log(shadeds_color);
+       
         
         this.buffers = {
-            pBuffer: pBuffer,
-            cBuffer: cBuffer,
-            nBuffer: nBuffer,
+            pBuffer: this.pBuffer,
+            cBuffer: this.cBuffer,
+            nBuffer: this.nBuffer,
 
 
             pComponents: 4, 
@@ -192,13 +192,14 @@ function ShadedSphere(gl,inittrans,vs,fs){
         gl.vertexAttribPointer(this.locations.attribute.aNormal,
             this.buffers.nComponents,
             gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.cBuffer);
         gl.vertexAttribPointer(this.locations.attribute.aColor,
             this.buffers.cComponents,
             gl.FLOAT, false, 0, 0);
 
 
-        for( var i=0; i<shadeds_index; i+=3){
-           
+        for (var i = 0; i < shadeds_index; i += 3) {
+
 
 
             gl.drawArrays( gl.TRIANGLES, i, 3 );
@@ -210,12 +211,16 @@ function ShadedSphere(gl,inittrans,vs,fs){
 
 
     };
+    this.update=function(theta){
+        const rot = theta*(-1.5);
+        this.updateRota([theta*0,theta*0,rot]);
+
+    }
 
 
     
     this.name ="sphere";
     this.updateRota=function(r){
-        console.log("s");
    
         mat4.rotateX(this.rotaM,this.rotaM,r[0]);
         mat4.rotateY(this.rotaM,this.rotaM,r[1]);
@@ -349,104 +354,7 @@ function ShadedSphere(gl,inittrans,vs,fs){
 
 
 
-function fillshadedSpoints(){
-    var va = [0.0, 0.0, -1.0,1.0];
-    var vb = [0.0, 0.942809, 0.333333,1.0];
-    var vc = [-0.816497, -0.471405, 0.333333,1.0];
-    var vd = [0.816497, -0.471405, 0.333333,1.0];
-    
 
-   
-    stetrahedron(va, vb, vc, vd, shadednumTimesToSubdivide);
-  
-
-}
-
-function stetrahedron(a, b, c, d, n) {
-    sdivideTriangle(a, b, c, n);
-    sdivideTriangle(d, c, b, n);
-    sdivideTriangle(a, d, b, n);
-    sdivideTriangle(a, c, d, n);
-    
-}
-
-function sdivideTriangle(a, b, c, count) {
-    
-    if (count > 0) {
-  //      var ab = normalize(mix(a, b, 0.5), true);
-   //     var ac = normalize(mix(a, c, 0.5), true);
-    //    var bc = normalize(mix(b, c, 0.5), true);  
-        var ab = normalo(gaa(a, b));
-        var ac = normalo(gaa(a, c));
-          var bc = normalo(gaa(b, c));
-
-    //    var ab = vec4.create();vec4.normalize(ab,mix(a, b, 0.5), true);
-      //  var ac = vec4.create();vec4.normalize(ac,mix(a, c, 0.5), true);
-       // var bc = vec4.create();vec4.normalize(bc,mix(b, c, 0.5), true);
-
-        sdivideTriangle(a, ab, ac, count - 1);
-        sdivideTriangle(ab, b, bc, count - 1);
-        sdivideTriangle(bc, c, ac, count - 1);
-        sdivideTriangle(ab, bc, ac, count - 1);
-    }
-    else {
-        striangle(a, b, c);
-    }
-}
-this.shColor=[0.0,1.0,0.0,0.0];
-function striangle(a, b, c){
- /*   if(a[1]<0){
-        a[1]=0;
-    }
-    if(b[1]<0){
-        b[1]=0;
-    }
-    if(c[1]<0){
-        c[1]=0;
-    }*/
-    shadedsphere_points.push(a);
-    shadeds_color.push(this.shColor[0]);
-    shadeds_color.push(this.shColor[1]);
-    shadeds_color.push(this.shColor[2]);
-    shadeds_color.push(this.shColor[3]);
-
-    shadedsphere_points.push(b);
-    shadeds_color.push(this.shColor[0]);
-    shadeds_color.push(this.shColor[1]);
-    shadeds_color.push(this.shColor[2]);
-    shadeds_color.push(this.shColor[3]);
-    shadedsphere_points.push(c);
-    shadeds_color.push(this.shColor[0]);
-    shadeds_color.push(this.shColor[1]);
-    shadeds_color.push(this.shColor[2]);
-    shadeds_color.push(this.shColor[3]);
-    shadeds_index += 3;
-
-    shadedsphere_normals.push(a[0],a[1], a[2], 0.0);
-     shadedsphere_normals.push(b[0],b[1], b[2], 0.0);
-     shadedsphere_normals .push(c[0],c[1], c[2], 0.0);
-
-
-    }
-
-    //this is my function to get the normal, because for some reasons the mat4 function didnt get it right
-function normalo(u){
-    var last = u.pop();
-    var len =  Math.sqrt( u[0]*u[0]+u[1]*u[1]+u[2]*u[2] );
-    for ( var i = 0; i < u.length; ++i ) {
-        u[i] /= len;
-    }
-    u.push( last );
-    return u;
-}
-function gaa(a,b){
-    var ret = [];
-    for ( var i = 0; i < a.length; ++i ) {
-        ret.push( 0.5 * a[i] + 0.5 * b[i] );
-    }
-    return ret;
-
-}
 
 
 function flatten( v )
@@ -483,7 +391,7 @@ function flatten( v )
 }
 
 function dozero(){
-    for(i =0;i<shadedsphere_points.length;i++){
+    for(i =0;i<Spherepoints.length;i++){
 
     }
 
