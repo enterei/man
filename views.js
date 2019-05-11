@@ -1,8 +1,15 @@
 var angY=0 ;
+
+
+angleX = degToRad(310);
+angleY = degToRad(45);
+angleX = degToRad(-90 );
+angleY = degToRad(0);
 angleX = degToRad(310);
 angleY = degToRad(45);
 
-cameraX = 0.0;
+
+cameraX = -0.45 ;
 cameraY= 0.0;
 cameraZ=-5.0
 CAMERA = mat4.create();

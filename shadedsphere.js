@@ -230,6 +230,7 @@ function ShadedSphere(gl,inittrans,vs,fs,oben){
 
     };
     this.updateGlRota=function(r){
+        this.glrota=mat4.create();
         
         mat4.rotateX(this.glrota,this.glrota,r[0]);
         mat4.rotateY(this.glrota,this.glrota,r[1]);
@@ -277,8 +278,8 @@ function ShadedSphere(gl,inittrans,vs,fs,oben){
     };
     this.updateGlTrans = function(t){
         
-        console.log(activesp);
-        console.log(paths[activesp]);
+        console.log(t);
+        //console.log(paths[activesp]);
         var l = paths[activesp].neighbors.length;
         var helpx = mat4.create();
         helpx = mat4.clone(this.gltrans);
@@ -293,12 +294,12 @@ function ShadedSphere(gl,inittrans,vs,fs,oben){
            if(res.status){
               
                activesp=res.n
-               console.log("do step");  
+          //     console.log("do step");  
                mat4.translate(this.gltrans,this.gltrans,t);     
-             console.log(this.gltrans);   
+         //    console.log(this.gltrans);   
               this.updateGlAll();  
 
-              return;
+              return true;
 
            }
            console.log("dont step");  
@@ -309,6 +310,7 @@ function ShadedSphere(gl,inittrans,vs,fs,oben){
         //mat4.translate(this.gltrans,this.gltrans,t);     
         //console.log(this.gltrans);   
        //this.updateGlAll();  
+       return false;
      
        
     };

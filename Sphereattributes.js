@@ -35,7 +35,7 @@ function fillshadedSpoints(oben){
    
     stetrahedron(va, vb, vc, vd, shadednumTimesToSubdivide,oben);
   
-    console.log(Spherepoints);
+//    console.log(Spherepoints);
 
 
     console.log(xc);
@@ -81,7 +81,7 @@ function sdivideTriangle(a, b, c, count,oben) {
 
 function striangle(a, b, c,oben){
     com = -0.7
-    console.log(oben);
+   // console.log(oben);
     if(oben){
       //  console.log("oben");
         if(a[1]<0){

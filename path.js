@@ -34,10 +34,10 @@ function Path(x1,x2,z1,z2,act,n){
         zn = parseInt(z*1000000);
         z1n=parseInt(this.z1*1000000);
         z2n=parseInt(this.z2*1000000);
-        console.log(this.n);
-        console.log(x1n,x2n,z1n,z2n);
+      //  console.log(this.n);
+       // console.log(x1n,x2n,z1n,z2n);
 
-        console.log(xn,zn);
+       // console.log(xn,zn);
        // if(parseInt(x*100000)>=parseInt(this.x1*1000000)) console.log(true);
         //if(parseInt(x*100000)<=parseInt(this.x2*1000000)) console.log(true);
        /* if(xn>=x1n) console.log(true);
@@ -45,10 +45,10 @@ function Path(x1,x2,z1,z2,act,n){
         else{
             console.log(parseInt(x*1000000),parseInt(this.x2*1000000));
         }*/
-        if(xn>=x1n) console.log(true);
+    /*    if(xn>=x1n) console.log(true);
         if(xn<=x2n) console.log(true);
         if(zn>=z1n) console.log(true);
-        if(zn<=z2n) console.log(true);
+        if(zn<=z2n) console.log(true);*/
        // else{
        //     console.log(zn,z2n);
        // }

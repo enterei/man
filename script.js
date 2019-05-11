@@ -1,6 +1,8 @@
 function main() {
     init();
 }
+var audio = new Audio('pacm.m4a');
+audio.play();
 var pacman = null;
 var trans = [0, 0, 0];
 var ltrans = [0, 0, 0];
@@ -62,14 +64,12 @@ function init() {
 
 
 
-    // reason for calling "gauraud vertex/fragment" shader is that i iniatially wanted to make 2 diffrent shaders and initiallize every sphere twice but then i used the mode variable
-    // pacman = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "vertex-shader", "fragment-shader");
+    
 
     pacman = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader",true);
     pacman2 = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader",false);
 
 
-    // pacman = new ShadedSphere(gl, [0.0, 0.05, 0.0], "vertex-shader", "fragment-shader");
 
 
     pacman.updateScale([0.05, 0.05, 0.05]);
@@ -97,18 +97,6 @@ function init() {
     pacman2.updateGlTrans(pacman.position);
 
     cubes.push(pacman);
-
-
-
-
-    /*for (var i = 0; i < cubes.length; i++)cubes[i].updateTrans(cubes[i].position); // for alls cubes todo
-    for (var i = 0; i < cubes.length; i++)cubes[i].updateScale([0.5, 0.5, 0.5]); // for alls cubes todo
-    for (var i = 0; i < fragments1.length; i++)fragments1[i].updateTrans(fragments1[i].position); // for alls cubes todo
-    for (var i = 0; i < fragments2.length; i++)fragments2[i].updateTrans(fragments2[i].position); // for alls cubes todo
-
-*/
-
-
 
     var then = 0;
     var rotcounter =0;
@@ -158,37 +146,13 @@ function init() {
 
 
 
-
-
-
-
-
-
-
-
-
-        /*   cubes[0].draw(gl, perspectiveMatrix,CAMERA);
-           for(i = 0; i<walls.length;i++) walls[i].draw(gl,perspectiveMatrix,CAMERA);
-            gP.draw(gl,perspectiveMatrix,CAMERA);*/
-
         pacman.drawL(gl, pMatrix);
         pacman2.drawL(gl, pMatrix);
 
-     //   for (i = 0; i < walls.length; i++) walls[i].drawL(gl, pMatrix);
-      //  gP.draw(gl, pMatrix);
-
-        //   cubes[0].draw(gl, perspectiveMatrix);
-        //  for(i = 0; i<walls.length;i++) walls[i].draw(gl,perspectiveMatrix);
-        // gP.draw(gl,perspectiveMatrix);
+        for (i = 0; i < walls.length; i++) walls[i].drawL(gl, pMatrix);
+        gP.draw(gl, pMatrix);
 
 
-
-        //    gP.draw(gl,pMatrix);
-        //    cubes[0].draw(gl, pMatrix);
-
-
-        //cubes[selected].draw(gl, pMatrix);
-        //    coord.draw(gl, pMatrix, cubes[selected].mMatrix);
 
         if (xxxx) requestAnimationFrame(render);
     }
@@ -257,7 +221,12 @@ window.onkeydown = function (event) {
 
             ltrans[0] = -0.5;
             // cubes[selected].updateTrans(trans);
-            update_trans(trans);
+            if(update_trans(trans)){
+                console.log("rotaaaa");
+                pacman.updateGlRota([0,0,0]);  
+                pacman2.updateGlRota([0,0,0]); 
+
+            }
 
             break;
 
@@ -267,20 +236,30 @@ window.onkeydown = function (event) {
             trans[0] = 0.01;
             ltrans[0] = 0.5;
             // cubes[selected].updateTrans(trans);
-            update_trans(trans);
+            if(update_trans(trans)){
+                pacman.updateGlRota([0,2*raddeg(90),0]);  
+                pacman2.updateGlRota([0,2*raddeg(90),0]); 
+
+            }
             break;
 
         case 38:
-            trans[2] = 0.01;
+            trans[2] = -0.01;
             ltrans[1] = 0.5;
-            // cubes[selected].updateTrans(trans);
-            update_trans(trans);
+            if(update_trans(trans)){
+                pacman.updateGlRota([0,3*raddeg(90),0]);  
+                pacman2.updateGlRota([0,3*raddeg(90),0]); 
+
+            }
             break;
         case 40:
-            trans[2] = -0.01;
+            trans[2] = 0.01;
             ltrans[1] = -0.5;
-            // cubes[selected].updateTrans(trans);
-            update_trans(trans);
+            if(update_trans(trans)){
+                pacman.updateGlRota([0,1*raddeg(90),0]);  
+                pacman2.updateGlRota([0,1*raddeg(90),0]); 
+
+            }
             break;
         case 190:
             trans[2] = 0.01;
@@ -359,8 +338,8 @@ window.onkeydown = function (event) {
             mode = 2.0;
             break;
         case 80:
-        pacman.updateRota([0,raddeg(90),0]);  
-        pacman2.updateRota([0,raddeg(90),0]);  
+        pacman.updateGlRota([0,raddeg(90),0]);  
+        pacman2.updateGlRota([0,raddeg(90),0]);  
 
                     break;
         case 76:
@@ -404,29 +383,26 @@ function setfalse() {
 
 
 function update_trans() {
-
-    pacman.updateGlTrans(trans);
-    pacman2.updateGlTrans(trans);
-    //cubes[0].updateGlTrans(trans);
-    //console.log(pacman.transM);
-
-    cameraX += 0.5 * trans[0];
-    cameraZ += 0.5 * trans[2];
+    if (pacman.updateGlTrans(trans) && pacman2.updateGlTrans(trans)) {
+        cameraX += 0.6* trans[0];
+       // cameraZ +=  trans[2];
+        cameraY += -0.7*trans[2];
 
 
-    updateC();
+        updateC();
+        return true
 
+    }
+    
+    return false;
+  
 }
 
 
 function update_rota() {
 
     pacman.updateRota(rotas);
-    //cubes[0].updateGlTrans(trans);
-    //console.log(pacman.transM);
-
-    //   cameraX += 0.5*trans[0];
-    //  cameraZ += 0.5*trans[2];
+  
 
 
     updateC();
@@ -435,21 +411,6 @@ function update_rota() {
 
 
 
-/*function update_scale() {
-    if (lightmode) {
-
-    }
-    else {
-        if (selected == 10) {
-
-            for (i = 0; i < cubes.length; i++) {
-                cubes[i].updateScale(scale);
-            }
-
-        }
-        else cubes[selected].updateScale(scale);
-    }
-}*/
 
 function raddeg(degrees){
     return degrees * Math.PI / 180;
