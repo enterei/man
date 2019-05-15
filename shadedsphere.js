@@ -2,12 +2,13 @@
 
 
 
-function ShadedSphere(gl,inittrans,vs,fs,oben){
+function ShadedSphere(gl,inittrans,vs,fs,oben,pac){
    
       
         console.log(oben);
         this.shaderProgram = initShaders(gl,vs, fs);
         this.oben = oben;
+        this.pac = pac;
       
         console.log(vs);
         console.log(fs);
@@ -43,12 +44,12 @@ function ShadedSphere(gl,inittrans,vs,fs,oben){
 
         if(Spherepoints.length==0){
             console.log(this.oben);
-            fillshadedSpoints(this.oben);}
+            fillshadedSpoints(this.oben,this.pac);}
         else{
             console.log("uahhh");
 
             Spherepoints=[];
-            fillshadedSpoints(this.oben)
+            fillshadedSpoints(this.oben,this.pac);
         }
       
   

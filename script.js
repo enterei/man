@@ -1,7 +1,7 @@
 function main() {
     init();
 }
-var audio = new Audio('pacm.m4a');
+var audio = new Audio(' pacm.m4a');
 audio.play();
 var pacman = null;
 var trans = [0, 0, 0];
@@ -66,8 +66,8 @@ function init() {
 
     
 
-    pacman = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader",true);
-    pacman2 = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader",false);
+    pacman = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true);
+    pacman2 = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader",false,true);
 
 
 
