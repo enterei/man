@@ -25,6 +25,7 @@ var zob2 = zub1*(-1);
 console.log(zub1);
 console.log(zob2);
 function fillshadedSpoints(oben){
+    shadeds_index =0;
     
     var va = [0.0, 0.0, -1.0,1.0];
     var vb = [0.0, 0.942809, 0.333333,1.0];
@@ -43,7 +44,7 @@ function fillshadedSpoints(oben){
     console.log(zc);
     console.log(count); 
    // console.log(Spherecolors);
-    console.log(schwarzen);
+    console.log(shadeds_index);
 
 }
 
@@ -196,3 +197,74 @@ function inbound(compare){
         
     else return false;
 }
+function fillball(){
+    shadeds_index =0;
+    var va = [0.0, 0.0, -1.0,1.0];
+    var vb = [0.0, 0.942809, 0.333333,1.0];
+    var vc = [-0.816497, -0.471405, 0.333333,1.0];
+    var vd = [0.816497, -0.471405, 0.333333,1.0];
+    
+
+   
+    ballstetrahedron(va, vb, vc, vd, shadednumTimesToSubdivide);
+
+    for (i =0;i<768;i++){
+        Spherecolors.push([0.0,1.0,1.0,1.0]);
+    }
+
+}
+
+function ballstetrahedron(a, b, c, d, n) {
+    ballsdivideTriangle(a, b, c, n);
+    ballsdivideTriangle(d, c, b, n);
+    ballsdivideTriangle(a, d, b, n);
+    ballsdivideTriangle(a, c, d, n);
+    
+}
+
+function ballsdivideTriangle(a, b, c, count) {
+    
+    if (count > 0) {
+  //      var ab = normalize(mix(a, b, 0.5), true);
+   //     var ac = normalize(mix(a, c, 0.5), true);
+    //    var bc = normalize(mix(b, c, 0.5), true);  
+        var ab = normalo(gaa(a, b));
+        var ac = normalo(gaa(a, c));
+          var bc = normalo(gaa(b, c));
+
+    //    var ab = vec4.create();vec4.normalize(ab,mix(a, b, 0.5), true);
+      //  var ac = vec4.create();vec4.normalize(ac,mix(a, c, 0.5), true);
+       // var bc = vec4.create();vec4.normalize(bc,mix(b, c, 0.5), true);
+
+        ballsdivideTriangle(a, ab, ac, count - 1);
+        ballsdivideTriangle(ab, b, bc, count - 1);
+        ballsdivideTriangle(bc, c, ac, count - 1);
+        ballsdivideTriangle(ab, bc, ac, count - 1);
+    }
+    else {
+        ballstriangle(a, b, c);
+    }
+}
+
+function ballstriangle(a, b, c){
+   
+   
+    
+
+
+    Spherepoints.push(a);
+    
+    
+
+    Spherepoints.push(b);
+   
+    Spherepoints.push(c);
+ 
+    shadeds_index += 3;
+
+    Spherenormals.push(a[0],a[1], a[2], 0.0);
+     Spherenormals.push(b[0],b[1], b[2], 0.0);
+     Spherenormals .push(c[0],c[1], c[2], 0.0);
+
+
+    }

@@ -6,7 +6,7 @@ angleY = degToRad(45);
 angleX = degToRad(-90 );
 angleY = degToRad(0);
 angleX = degToRad(310);
-angleY = degToRad(45);
+angleY = degToRad(45);  
 
 
 cameraX = -0.45 ;

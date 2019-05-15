@@ -2,13 +2,15 @@
 
 
 
-function ShadedSphere(gl,inittrans,vs,fs,oben,pac){
+function ShadedSphere(gl,inittrans,vs,fs,oben,pac,ball){
    
       
         console.log(oben);
         this.shaderProgram = initShaders(gl,vs, fs);
         this.oben = oben;
         this.pac = pac;
+        this.ball = ball;
+        this.viewable = true;
       
         console.log(vs);
         console.log(fs);
@@ -50,6 +52,15 @@ function ShadedSphere(gl,inittrans,vs,fs,oben,pac){
 
             Spherepoints=[];
             fillshadedSpoints(this.oben,this.pac);
+        }
+
+        if(ball){
+            Spherecolors=[];
+            Spherepoints=[];
+            Spherenormals=[];
+            fillball();
+
+
         }
       
   
@@ -279,14 +290,14 @@ function ShadedSphere(gl,inittrans,vs,fs,oben,pac){
     };
     this.updateGlTrans = function(t){
         
-        console.log(t);
+        //console.log(t);
         //console.log(paths[activesp]);
         var l = paths[activesp].neighbors.length;
         var helpx = mat4.create();
         helpx = mat4.clone(this.gltrans);
         
         mat4.translate(helpx,helpx,t);
-        //console.log(this.gltrans);  
+        console.log(this.gltrans);  
         for(i = 0;i<l;i++){
       
            var res=  paths[activesp].neighbors[i].check(helpx[12],helpx[14]);
@@ -303,7 +314,7 @@ function ShadedSphere(gl,inittrans,vs,fs,oben,pac){
               return true;
 
            }
-           console.log("dont step");  
+         //  console.log("dont step");  
 
 
 
@@ -315,6 +326,19 @@ function ShadedSphere(gl,inittrans,vs,fs,oben,pac){
      
        
     };
+    this.updateGllTrans = function(t){
+        
+   
+        mat4.translate(this.gltrans,this.gltrans,t);     
+  //    console.log(this.gltrans);   
+       this.updateGlAll();  
+
+       return true;
+
+   
+
+
+};
 
     this.updateAll= function(){
         mat4.identity(this.mMatrix);
@@ -399,3 +423,5 @@ function dozero(){
     }
 
 }
+
+

@@ -1,12 +1,16 @@
 function main() {
     init();
 }
-var audio = new Audio(' pacm.m4a');
+var audio = new Audio('pacm.m4a');
 audio.play();
 var pacman = null;
 var trans = [0, 0, 0];
 var ltrans = [0, 0, 0];
 var cubes = [];
+var balls = [];
+var counter =0;
+var balln = 14;
+
 
 var fragments1 = [];
 var fragments2 = [];
@@ -66,8 +70,9 @@ function init() {
 
     
 
-    pacman = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true);
-    pacman2 = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader",false,true);
+    pacman = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,false);
+    pacman2 = new ShadedSphere(gl, [-0.44999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader",false,true,false);
+
 
 
 
@@ -80,6 +85,46 @@ function init() {
 
     updateWalls(gl);
 
+
+
+    ball0 = new ShadedSphere(gl, [-0.64999999, 0.05, 0.0], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball1 = new ShadedSphere(gl, [-0.4500000476837158,0.05 , -0.20000003278255463], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball2 = new ShadedSphere(gl, [ -1.0999994277954102,0.05 , -0.3999999165534973], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball3 = new ShadedSphere(gl, [ -1.349999189376831,0.05 , 0.15000000596046448], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball4 = new ShadedSphere(gl, [ -1.1899993419647217 ,0.05 , 0.3999999165534973    ], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball5 = new ShadedSphere(gl, [ -1.0599994659423828 ,0.05 , 0.18000002205371857   ], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball6 = new ShadedSphere(gl, [ -0.09000018239021301 ,0.05 , 0.14000000059604645    ], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball7 = new ShadedSphere(gl, [ 0.5499996542930603 ,0.05 , 0.27000004053115845    ], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball8 = new ShadedSphere(gl, [ 0.3599998354911804        ,0.05 ,-0.07999999821186066    ], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball9 = new ShadedSphere(gl, [ 0.5499996542930603       ,0.05 ,-0.3999999165534973    ], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball10 = new ShadedSphere(gl, [ 1.0699992179870605      ,0.05 ,-0.27000004053115845   ], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball11 = new ShadedSphere(gl, [ 1.349998950958252    ,0.05 ,0.18000002205371857   ], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball12 = new ShadedSphere(gl, [ 1.219999074935913    ,0.05 ,-0.009999996051192284   ], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+    ball13 = new ShadedSphere(gl, [ 1.1899991035461426   ,0.05 ,0.3999999165534973     ], "gauraud-vertex-shader", "gauraud-fragment-shader",true,true,true);
+
+    balls.push(ball0);
+    balls.push(ball1);
+    balls.push(ball2);
+    balls.push(ball3);
+    balls.push(ball4);
+    balls.push(ball5);
+    balls.push(ball6);
+    balls.push(ball7);
+    balls.push(ball8);
+    balls.push(ball9);
+    balls.push(ball10);
+    balls.push(ball11);
+    balls.push(ball12);
+    balls.push(ball13);
+
+
+
+
+
+    for(i=0;i<balls.length;i++){
+         balls[i].updateScale([0.025, 0.025, 0.025]);
+         balls[i].updateGllTrans(balls[i].position);
+    }
 
 
 
@@ -152,8 +197,12 @@ function init() {
         for (i = 0; i < walls.length; i++) walls[i].drawL(gl, pMatrix);
         gP.draw(gl, pMatrix);
 
+        for(i=0;i<balls.length;i++){
+            if(balls[i].viewable) balls[i].drawL(gl,pMatrix);
+        }
 
 
+        document.getElementById("pcount").innerHTML=counter;
         if (xxxx) requestAnimationFrame(render);
     }
 
@@ -222,7 +271,7 @@ window.onkeydown = function (event) {
             ltrans[0] = -0.5;
             // cubes[selected].updateTrans(trans);
             if(update_trans(trans)){
-                console.log("rotaaaa");
+         //       console.log("rotaaaa");
                 pacman.updateGlRota([0,0,0]);  
                 pacman2.updateGlRota([0,0,0]); 
 

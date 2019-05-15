@@ -70,7 +70,7 @@ function Cube(gl, inittrans) {
     };
 
 
-
+    
     this.position = inittrans;
     this.transM = mat4.create();
     //this.oldpos=this.position;
